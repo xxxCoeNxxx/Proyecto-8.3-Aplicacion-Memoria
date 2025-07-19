@@ -95,3 +95,27 @@ button:focus-visible {
     background-color: #f9f9f9;
   }
 }
+
+.zona-cartas {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-template-rows: repeat(3, auto);
+  justify-content: center;
+  gap: 1rem;
+  
+  width: 80vw;  /* ancho 80% pantalla */
+  margin: 0 auto; /* centrado */
+}
+
+
+.marco {
+  width: 80vw; /* ancho 80% pantalla */
+  height: 90vh; /* alto 90% pantalla */
+  margin: 0 auto; /* centrado */
+  background-color: #1a1a1a;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}

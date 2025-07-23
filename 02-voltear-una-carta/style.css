@@ -1,3 +1,4 @@
+
 :root {
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
@@ -96,7 +97,7 @@ button:focus-visible {
   }
 }
 
-.zona-cartas {
+ #zona-cartas {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   grid-template-rows: repeat(3, auto);
@@ -104,18 +105,25 @@ button:focus-visible {
   gap: 1rem;
   
   width: 80vw;  /* ancho 80% pantalla */
-  margin: 0 auto; /* centrado */
-}
+  margin: 0 auto; 
+} 
+ 
 
-
-.marco {
-  width: 80vw; /* ancho 80% pantalla */
-  height: 90vh; /* alto 90% pantalla */
-  margin: 0 auto; /* centrado */
+#marco {
+  width: 80vw;
+  height: 90vh;
+  margin: 0 auto;
   background-color: #1a1a1a;
   border-radius: 10px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
+}
+
+.carta {
+  width: 128px; /* imágenes.png de 128x128px */
+  height: 128px;
+  background-color: #00bde8;
+  border-radius: 10px;
 }

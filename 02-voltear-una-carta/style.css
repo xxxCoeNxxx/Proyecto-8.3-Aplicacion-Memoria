@@ -97,17 +97,6 @@ button:focus-visible {
   }
 }
 
- .zona-cartas {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  grid-template-rows: repeat(3, auto);
-  justify-content: center;
-  gap: 1rem;
-  background-color: #0093b4;
-  width: 80vw;  /* ancho 80% pantalla */
-  margin: 0 auto; 
-} 
- 
 
 .marco {
   width: 80vw;
@@ -120,6 +109,17 @@ button:focus-visible {
   align-items: center;
   justify-content: center;
 }
+
+ .zona-cartas {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-template-rows: repeat(3, auto);
+  justify-content: center;
+  gap: 1rem;
+  background-color: #0093b4;
+  width: 80vw;  /* ancho 80% pantalla */
+  margin: 0 auto; 
+} 
 
 .carta {
   width: 128px; /* imágenes.png de 128x128px */

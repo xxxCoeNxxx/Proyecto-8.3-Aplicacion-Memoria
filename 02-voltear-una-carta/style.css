@@ -97,19 +97,19 @@ button:focus-visible {
   }
 }
 
- #zona-cartas {
+ .zona-cartas {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   grid-template-rows: repeat(3, auto);
   justify-content: center;
   gap: 1rem;
-  
+  background-color: #0093b4;
   width: 80vw;  /* ancho 80% pantalla */
   margin: 0 auto; 
 } 
  
 
-#marco {
+.marco {
   width: 80vw;
   height: 90vh;
   margin: 0 auto;

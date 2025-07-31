@@ -111,23 +111,38 @@ button:focus-visible {
 }
 
  .zona-cartas {
-  display: grid;
+  display: flex;
+  flex-wrap: wrap;
+  /* grid-template-columns: repeat(4, 1fr); */
+  /* grid-template-rows: repeat(3, auto); */
+  /* grid-auto-flow: row; */
+/*   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  grid-template-rows: repeat(3, auto);
+  grid-template-rows: repeat(3, auto); */
   justify-content: center;
   gap: 1rem;
   background-color: #0093b4;
-  width: 80vw;  /* ancho 80% pantalla */
+  /*width: 80vw;   ancho 80% pantalla */
+  height: 148px;
+  width: 148px;
   margin: 0 auto; 
+  align-items: center;
 } 
-
 .carta {
-  width: 128px; /* imágenes.png de 128x128px */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 128px;
   height: 128px;
-  background-color: #00bde8;
   border-radius: 10px;
+  background-color: #00bde8;
   background-size: cover;
   background-position: center;
+}
+
+.carta-vacia {
+  background-image: none;
 }
 
 .flip-vertical-left {

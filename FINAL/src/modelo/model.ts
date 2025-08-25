@@ -28,12 +28,7 @@ const crearCartaInicial = (idFoto: number, imagen: string): Carta => ({
 
 const crearColeccionDeCartasInicial = (infoCartas: InfoCarta[]): Carta[] => {
   infoCartas.forEach((info) => {
-    const carta: Carta = {
-      idFoto: info.idFoto,
-      imagen: info.imagen,
-      estaVuelta: false,
-      encontrada: false,
-    };
+    const carta: Carta = crearCartaInicial(info.idFoto, info.imagen);
 
     cartas.push({ ...carta }, { ...carta });
   });

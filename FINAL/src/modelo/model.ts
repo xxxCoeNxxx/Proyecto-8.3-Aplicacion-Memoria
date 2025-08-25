@@ -19,7 +19,7 @@ const infoCartas: InfoCarta[] = [
   { idFoto: 6, imagen: "/img/6.png"},
 ];
 
-const crearCartaInicial = (idFoto: number, imagen: string): Carta => ({
+export const crearCartaInicial = (idFoto: number, imagen: string): Carta => ({
   idFoto,
   imagen,
   estaVuelta: false,

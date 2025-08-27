@@ -27,16 +27,17 @@ export const crearCartaInicial = (idFoto: number, imagen: string): Carta => ({
 });
 
 const crearColeccionDeCartasInicial = (infoCartas: InfoCarta[]): Carta[] => {
+  const mazo: Carta[] = [];
   infoCartas.forEach((info) => {
     const carta: Carta = crearCartaInicial(info.idFoto, info.imagen);
-
-    cartas.push({ ...carta }, { ...carta });
+    mazo.push({ ...carta }, { ...carta });
   });
 
-  return cartas;
+  return mazo;
 };
 
 export let cartas: Carta[] = crearColeccionDeCartasInicial(infoCartas);
+
 
 type EstadoPartida =
   | "PartidaNoIniciada"
@@ -52,7 +53,7 @@ export interface Tablero {
   indiceCartaVolteadaB?: number;
 };
 
-const crearTableroInicial = (): Tablero => ({
+export const crearTableroInicial = (): Tablero => ({
   cartas: cartas,
   estadoPartida: "PartidaNoIniciada",
 });

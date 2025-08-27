@@ -1,7 +1,7 @@
 import { Carta, Tablero, cartas, crearCartaInicial } from "../modelo/model";
 
 // Barajamos las cartas
-const barajarCartas = (cartas : Carta[]): Carta[] => {
+export const barajarCartas = (cartas : Carta[]): Carta[] => {
   const durstenfeldShuffle = <T>(array: T[]): T[] => {
     const copia = [...array];
     for (let i = copia.length - 1; i > 0; i--) {
@@ -21,7 +21,7 @@ const sePuedeVoltearLaCarta = (tablero: Tablero, indice: number ): boolean => {
   return true;
 };
 
-const voltearLaCarta = (tablero: Tablero, indice: number) : void => {
+export const voltearLaCarta = (tablero: Tablero, indice: number) : void => {
   if (sePuedeVoltearLaCarta(tablero, indice)) {
     tablero.cartas[indice].estaVuelta = true;
     tablero.estadoPartida = "UnaCartaLevantada";

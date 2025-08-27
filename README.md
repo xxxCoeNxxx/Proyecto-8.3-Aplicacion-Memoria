@@ -10,3 +10,4 @@ Para acceder a las distintas carpetas:
   - [03-grid-cartas](http://localhost:5173/03-grid-cartas/index.html)  
   - [04-voltear-dos-cartas](http://localhost:5173/04-voltear-dos-cartas/index.html)  
   - [05-mapear-div-con-array](http://localhost:5173/05-mapear-div-con-array/index.html)
+  - [06-PROYECTO-FINAL](http://localhost:5173/index.html)

@@ -85,6 +85,14 @@ for (let nCarta = 1; nCarta <= 12; nCarta++) {
         if (esPartidaCompleta(tablero)) {
           tablero.estadoPartida = "PartidaCompleta";
           console.log(tablero.estadoPartida);
+
+          const mensajeFinal = document.getElementById("mensaje-final") as HTMLDivElement;
+          mensajeFinal.textContent = "¡Has ganado!";
+          mensajeFinal.classList.add ("visible");
+          setTimeout(() => {
+            mensajeFinal.classList.remove("visible");
+            mensajeFinal.textContent = "";
+          }, 3000);
         }
       } else {
         bloqueoClick = true;

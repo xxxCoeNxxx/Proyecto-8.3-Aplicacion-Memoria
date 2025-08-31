@@ -132,6 +132,27 @@ body {
   opacity: 1;
 }
 
+.mensaje-final {
+  position: absolute;
+  top: 50%; 
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(0,0,0,0.8);
+  color: #60f0f1;
+  font-size: 24px;
+  padding: 1em 2em;
+  border-radius: 10px;
+  opacity: 0;
+  z-index: 1000; /* Muy alto para estar encima de las cartas */
+  pointer-events: none;
+  text-align: center;
+  transition: opacity 0.5s ease;
+}
+
+.mensaje-final.visible {
+  opacity: 1;
+}
+
 @media (max-width: 600px) {
   .zona-cartas {
     grid-template-columns: repeat(3, 100px);

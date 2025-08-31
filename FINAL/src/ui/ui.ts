@@ -31,6 +31,7 @@ export const crearBotonIniciar = () => {
           cartaDOM.classList.add("flip-vertical-right", "carta-vacia");
           cartaDOM.style.backgroundImage = "none";
         }, 300);
+        cartaDOM.classList.add("wobble-hor-bottom");
       }
     });
   }
@@ -72,6 +73,8 @@ for (let nCarta = 1; nCarta <= 12; nCarta++) {
       if (sonPareja(indicePrimeraCarta, indiceSegundaCarta, tablero)) {
         indicePrimeraCarta = null;
         indiceSegundaCarta = null;
+        carta1DOM.classList.remove("wobble-hor-bottom");
+        carta2DOM.classList.remove("wobble-hor-bottom");
 
         if (esPartidaCompleta(tablero)) {
           tablero.estadoPartida = "PartidaCompleta";

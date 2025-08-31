@@ -113,3 +113,26 @@ export const voltearCarta = (carta: HTMLElement, url: string): void => {
   carta.classList.add("flip-vertical-left");
   carta.style.backgroundImage = `url('${url}')`;
 };
+
+export const mostrarMensajeSobreCarta = (cartaDOM: HTMLDivElement, texto: string) => {
+  const rect = cartaDOM.getBoundingClientRect(); 
+  const tip = document.createElement("div");
+  tip.className = "mensaje-carta";
+  tip.textContent = texto;
+
+  // Posicionamos el mensaje sobre la carta
+  tip.style.left = `${rect.left + rect.width / 2 + window.scrollX}px`;
+  tip.style.top = `${rect.top - 30 + window.scrollY}px`;
+  tip.style.transform = "translateX(-50%)";
+
+  document.body.appendChild(tip);
+
+  // Forzamos que se aplique la transición
+  requestAnimationFrame(() => tip.classList.add("mensaje-carta--visible"));
+
+  // Lo ocultamos después de 1.2s
+  setTimeout(() => {
+    tip.classList.remove("mensaje-carta--visible");
+    setTimeout(() => tip.remove(), 250);
+  }, 1200);
+};

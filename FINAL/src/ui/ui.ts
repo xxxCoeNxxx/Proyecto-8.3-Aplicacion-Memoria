@@ -1,5 +1,6 @@
 import { tablero } from "../modelo/model.ts";
-import { iniciaPartida, ocultarCarta, sonPareja, voltearCarta, esPartidaCompleta } from "../motor/motor.ts";
+import { iniciaPartida, ocultarCarta, sonPareja, voltearCarta, esPartidaCompleta, 
+         mostrarMensajeSobreCarta} from "../motor/motor.ts";
 
 let indicePrimeraCarta: number | null = null;
 let indiceSegundaCarta: number | null = null;
@@ -25,13 +26,12 @@ export const crearBotonIniciar = () => {
       for (let nCarta = 1; nCarta <= 12; nCarta++) {
         const cartaDOM = document.getElementById(nCarta.toString()) as HTMLDivElement;
         cartaDOM.classList.remove("flip-vertical-left", "flip-vertical-right", "carta-vacia");
-        cartaDOM.classList.add("flip-vertical-left");
+        cartaDOM.classList.add("flip-vertical-left", "wobble-hor-bottom");
         setTimeout(() => {
           cartaDOM.classList.remove("flip-vertical-left");
           cartaDOM.classList.add("flip-vertical-right", "carta-vacia");
           cartaDOM.style.backgroundImage = "none";
         }, 300);
-        cartaDOM.classList.add("wobble-hor-bottom");
       }
     });
   }
@@ -49,17 +49,23 @@ for (let nCarta = 1; nCarta <= 12; nCarta++) {
     const indice = nCarta -1;
     const carta = tablero.cartas[indice];
     
-    if (carta.encontrada || carta.estaVuelta) return;
+    if (carta.encontrada || carta.estaVuelta) {
+      mostrarMensajeSobreCarta(cartaDOM, "Ya está volteda");
+      return;
+    }
 
     voltearCarta(cartaDOM, carta.imagen);
     carta.estaVuelta = true;
-
+    cartaDOM.classList.remove("wobble-hor-bottom");
+    
     if (tablero.estadoPartida === "UnaCartaLevantada") {
       tablero.estadoPartida = "DosCartasLevantadas"
       intentos++;
       intentosDiv.innerText = `Intentos: ${intentos}`;
     }
-    if (tablero.estadoPartida === "CeroCartasLevantadas") {tablero.estadoPartida = "UnaCartaLevantada"}
+    if (tablero.estadoPartida === "CeroCartasLevantadas") {
+      tablero.estadoPartida = "UnaCartaLevantada"
+    }
     console.log(tablero.estadoPartida);
 
     if (indicePrimeraCarta === null) {
@@ -87,6 +93,8 @@ for (let nCarta = 1; nCarta <= 12; nCarta++) {
           ocultarCarta(carta2DOM);
           tablero.cartas[indicePrimeraCarta!].estaVuelta = false;
           tablero.cartas[indiceSegundaCarta!].estaVuelta = false;
+          carta1DOM.classList.add("wobble-hor-bottom");
+          carta2DOM.classList.add("wobble-hor-bottom");
           indicePrimeraCarta = null;
           indiceSegundaCarta = null;
           bloqueoClick = false;

@@ -107,10 +107,29 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
+  position: relative;
 }
 
 .carta-vacia {
   background-image: none;
+}
+
+.mensaje-carta {
+  position: absolute;
+  background: rgba(0, 0, 0, 0.8);
+  color: rgb(96, 0, 241);
+  font-size: 14px;
+  padding: 4px 8px;
+  border-radius: 6px;
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity 0.25s ease;
+  pointer-events: none;
+  z-index: 999;
+}
+
+.mensaje-carta--visible {
+  opacity: 1;
 }
 
 @media (max-width: 600px) {

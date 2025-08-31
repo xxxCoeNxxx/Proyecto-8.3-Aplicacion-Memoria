@@ -132,3 +132,34 @@ button:focus-visible {
 .carta-vacia {
   background-image: none;
 }
+
+.menu {
+  width: 120px;
+  height: 40px;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  background-color: #1a1a1a;
+  color: #fff;
+  font-size: 1em;
+  font-weight: 500;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background-color 0.25s;
+}
+
+.menu.intentos {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 120px;
+  height: 40px;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  padding: 0.6em 1.2em;
+  font-size: 1em;
+  font-weight: 500;
+  font-family: inherit;
+  background-color: #1a1a1a;
+  color: #fff;
+  cursor: default;
+}

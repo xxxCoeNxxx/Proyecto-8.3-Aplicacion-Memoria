@@ -24,17 +24,35 @@ const sePuedeVoltearLaCarta = (tablero: Tablero, indice: number ): boolean => {
 export const voltearLaCarta = (tablero: Tablero, indice: number) : void => {
   if (sePuedeVoltearLaCarta(tablero, indice)) {
     tablero.cartas[indice].estaVuelta = true;
-    tablero.estadoPartida = "UnaCartaLevantada";
+
+    if (tablero.indiceCartaVolteadaA === undefined) {
+      tablero.indiceCartaVolteadaA = indice;
+      tablero.estadoPartida = "UnaCartaLevantada";
+    } else {
+      tablero.indiceCartaVolteadaB = indice;
+      tablero.estadoPartida = "DosCartasLevantadas";
+
+      if (tablero.indiceCartaVolteadaA !== -1 && tablero.indiceCartaVolteadaB !== -1) {
+        // Ya tenemos dos cartas volteadas → comprobar pareja
+        sonPareja(tablero.indiceCartaVolteadaA, tablero.indiceCartaVolteadaB, tablero);
+
+        // Reset para la siguiente jugada
+        tablero.indiceCartaVolteadaA = -1;
+        tablero.indiceCartaVolteadaB = -1;
+      }
+    }
   }
 };
 
 // Dos cartas son pareja si en el array de tablero de cada una tienen el mismo id
 export const sonPareja = (indiceA: number, indiceB: number, tablero: Tablero): boolean => {
   if (tablero.cartas[indiceA].idFoto === tablero.cartas[indiceB].idFoto) {
-    tablero.estadoPartida = "DosCartasLevantadas";
+    //tablero.estadoPartida = "DosCartasLevantadas";
+    parejaEncontrada(tablero, indiceA, indiceB);
     return true;
   }
-  tablero.estadoPartida = "DosCartasLevantadas";
+  //tablero.estadoPartida = "DosCartasLevantadas";
+  parejaNoEncontrada(tablero, indiceA, indiceB);
   return false;
 };
 
@@ -52,7 +70,7 @@ const parejaEncontrada = (tablero: Tablero, indiceA: number, indiceB: number) : 
 const parejaNoEncontrada = (tablero: Tablero, indiceA :number, indiceB : number) : void => {
   tablero.cartas[indiceA].estaVuelta = false;
   tablero.cartas[indiceB].estaVuelta = false;
-  tablero.estadoPartida = "DosCartasLevantadas";
+  tablero.estadoPartida = "CeroCartasLevantadas";
 };
 
 // Esto lo podemos comprobar o bien utilizando every, o bien utilizando un contador (cartasEncontradas)
@@ -73,11 +91,25 @@ export const iniciaPartida = (tablero: Tablero): void => {
   tablero.cartas = barajarCartas(cartasReiniciadas);
 
   // Reseteamos el estado
-  tablero.estadoPartida = "PartidaNoIniciada";
+  tablero.estadoPartida = "CeroCartasLevantadas";
   tablero.indiceCartaVolteadaA = undefined;
   tablero.indiceCartaVolteadaB = undefined;
   tablero.cartas.forEach((carta) => {
     carta.estaVuelta = false;
     carta.encontrada = false;
   });
+};
+
+export const ocultarCarta = (carta: HTMLElement) => {
+    carta.classList.remove("flip-vertical-left");
+    carta.classList.add("flip-vertical-right", "carta-vacia");
+    setTimeout(() => {
+        carta.style.backgroundImage = "none";
+    }, 200);
+};
+
+export const voltearCarta = (carta: HTMLElement, url: string): void => {
+  carta.classList.remove("carta-vacia", "flip-vertical-right");
+  carta.classList.add("flip-vertical-left");
+  carta.style.backgroundImage = `url('${url}')`;
 };

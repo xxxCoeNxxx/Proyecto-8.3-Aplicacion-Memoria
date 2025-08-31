@@ -37,8 +37,6 @@ const crearColeccionDeCartasInicial = (infoCartas: InfoCarta[]): Carta[] => {
 };
 
 export let cartas: Carta[] = crearColeccionDeCartasInicial(infoCartas);
-
-
 type EstadoPartida =
   | "PartidaNoIniciada"
   | "CeroCartasLevantadas"

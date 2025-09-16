@@ -1,4 +1,5 @@
 import { Carta, Tablero, cartas, crearCartaInicial } from "../modelo/model";
+import { noEncontradaPareja, encontradaPareja } from "../ui/ui";
 
 // Barajamos las cartas
 export const barajarCartas = (cartas : Carta[]): Carta[] => {
@@ -14,7 +15,7 @@ export const barajarCartas = (cartas : Carta[]): Carta[] => {
 };
 
 // Comprueba si una carta se puede voltear si no está encontrada y no está ya volteada, o no hay dos cartas ya volteadas
-const sePuedeVoltearLaCarta = (tablero: Tablero, indice: number ): boolean => {
+export const sePuedeVoltearLaCarta = (tablero: Tablero, indice: number ): boolean => {
   if (tablero.cartas[indice].encontrada || tablero.cartas[indice].estaVuelta || tablero.estadoPartida === "DosCartasLevantadas") {
     return false;
   }
@@ -22,55 +23,33 @@ const sePuedeVoltearLaCarta = (tablero: Tablero, indice: number ): boolean => {
 };
 
 export const voltearLaCarta = (tablero: Tablero, indice: number) : void => {
-  if (sePuedeVoltearLaCarta(tablero, indice)) {
-    tablero.cartas[indice].estaVuelta = true;
+  tablero.cartas[indice].estaVuelta = true;
 
-    if (tablero.indiceCartaVolteadaA === undefined) {
-      tablero.indiceCartaVolteadaA = indice;
-      tablero.estadoPartida = "UnaCartaLevantada";
-    } else {
-      tablero.indiceCartaVolteadaB = indice;
-      tablero.estadoPartida = "DosCartasLevantadas";
-
-      if (tablero.indiceCartaVolteadaA !== -1 && tablero.indiceCartaVolteadaB !== -1) {
-        // Ya tenemos dos cartas volteadas → comprobar pareja
-        sonPareja(tablero.indiceCartaVolteadaA, tablero.indiceCartaVolteadaB, tablero);
-
-        // Reset para la siguiente jugada
-        tablero.indiceCartaVolteadaA = -1;
-        tablero.indiceCartaVolteadaB = -1;
-      }
-    }
+  if (tablero.estadoPartida === 'CeroCartasLevantadas') {
+    tablero.indiceCartaVolteadaA = indice;
+    tablero.estadoPartida = "UnaCartaLevantada";
+  } else if (tablero.estadoPartida === 'UnaCartaLevantada') {
+    tablero.indiceCartaVolteadaB = indice;
+    tablero.estadoPartida = "DosCartasLevantadas";
   }
 };
 
 // Dos cartas son pareja si en el array de tablero de cada una tienen el mismo id
 export const sonPareja = (indiceA: number, indiceB: number, tablero: Tablero): boolean => {
-  if (tablero.cartas[indiceA].idFoto === tablero.cartas[indiceB].idFoto) {
-    //tablero.estadoPartida = "DosCartasLevantadas";
-    parejaEncontrada(tablero, indiceA, indiceB);
-    return true;
-  }
-  //tablero.estadoPartida = "DosCartasLevantadas";
-  parejaNoEncontrada(tablero, indiceA, indiceB);
-  return false;
+  return tablero.cartas[indiceA].idFoto === tablero.cartas[indiceB].idFoto
 };
 
 // Aquí asumimos ya que son pareja, lo que hacemos es marcarlas como encontradas y comprobar si la partida esta completa.
-const parejaEncontrada = (tablero: Tablero, indiceA: number, indiceB: number) : void => {
+export const parejaEncontrada = (tablero: Tablero, indiceA: number, indiceB: number) : void => {
   tablero.cartas[indiceA].encontrada = true;
   tablero.cartas[indiceB].encontrada = true;
-  
+  tablero.indiceCartaVolteadaA = undefined;
+  tablero.indiceCartaVolteadaB = undefined;
+  tablero.estadoPartida = 'CeroCartasLevantadas';
+
   if (esPartidaCompleta(tablero)) {
     tablero.estadoPartida = "PartidaCompleta";
   }
-};
-
-// Aquí asumimos que no son pareja y las volvemos a poner boca abajo
-const parejaNoEncontrada = (tablero: Tablero, indiceA :number, indiceB : number) : void => {
-  tablero.cartas[indiceA].estaVuelta = false;
-  tablero.cartas[indiceB].estaVuelta = false;
-  tablero.estadoPartida = "CeroCartasLevantadas";
 };
 
 // Esto lo podemos comprobar o bien utilizando every, o bien utilizando un contador (cartasEncontradas)
@@ -108,12 +87,6 @@ export const ocultarCarta = (carta: HTMLElement) => {
     }, 200);
 };
 
-export const voltearCarta = (carta: HTMLElement, url: string): void => {
-  carta.classList.remove("carta-vacia", "flip-vertical-right");
-  carta.classList.add("flip-vertical-left");
-  carta.style.backgroundImage = `url('${url}')`;
-};
-
 export const mostrarMensajeSobreCarta = (cartaDOM: HTMLDivElement, texto: string) => {
   const rect = cartaDOM.getBoundingClientRect(); 
   const tip = document.createElement("div");
@@ -136,3 +109,19 @@ export const mostrarMensajeSobreCarta = (cartaDOM: HTMLDivElement, texto: string
     setTimeout(() => tip.remove(), 250);
   }, 1200);
 };
+
+export const verSiEsLaSegundaCarta = (tablero: Tablero) => {
+  const indiceCartaA = tablero.indiceCartaVolteadaA;
+  const indiceCartaB = tablero.indiceCartaVolteadaB;
+
+  if (indiceCartaA !== undefined && indiceCartaB !== undefined) {
+    const carta1DOM = document.getElementById((indiceCartaA + 1).toString()) as HTMLDivElement;
+    const carta2DOM = document.getElementById((indiceCartaB + 1).toString()) as HTMLDivElement;
+
+    if (sonPareja(indiceCartaA, indiceCartaB, tablero)) {
+      encontradaPareja(tablero, indiceCartaA, indiceCartaB, carta1DOM, carta2DOM);
+    } else {
+      noEncontradaPareja(carta1DOM, carta2DOM)
+    }
+  }
+}

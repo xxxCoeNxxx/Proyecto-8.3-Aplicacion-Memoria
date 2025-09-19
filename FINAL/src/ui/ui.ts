@@ -1,10 +1,7 @@
 import { tablero, Tablero } from "../modelo/model.ts";
-import { iniciaPartida, ocultarCarta, sonPareja, esPartidaCompleta, 
-         mostrarMensajeSobreCarta, parejaEncontrada, 
-        sePuedeVoltearLaCarta, verSiEsLaSegundaCarta} from "../motor/motor.ts";
+import { iniciaPartida, esPartidaCompleta, parejaEncontrada, sePuedeVoltearLaCarta, 
+  voltearLaCarta, parejaNoEncontrada,resetIndices, sonPareja } from "../motor/motor.ts";
 
-let indicePrimeraCarta: number | null = null;
-let indiceSegundaCarta: number | null = null;
 let bloqueoClick = false;
 let intentos: number = 0;
 
@@ -18,7 +15,7 @@ export const crearBotonIniciar = () => {
     boton.addEventListener("click", () => {
       iniciaPartida(tablero); 
       console.log(tablero.estadoPartida);
-      resetIndices(); 
+      resetIndices(tablero); 
       bloqueoClick = false;
       intentos = 0;
       intentosDiv.innerText = `Intentos: ${intentos}`;
@@ -44,90 +41,64 @@ if (tablero.estadoPartida === "PartidaNoIniciada") { bloqueoClick = true; }
 // Mapear los divs de las cartas
 export const mapearDivsCartas = () => {
   for (let nCarta = 1; nCarta <= 12; nCarta++) {
-    const cartaDOM = document.getElementById(nCarta.toString()) as HTMLDivElement;
-
-    cartaDOM.addEventListener("click", () => {
-      if (bloqueoClick) return;
-        const indice = nCarta -1;
-        const carta = tablero.cartas[indice];
-        
-      // 1. Si la carta se le puede voltear => sePuedeVoltearLaCarta
-      if (sePuedeVoltearLaCarta(tablero, indice)) {
-        // 2. Se comprueba si se puede voltear y si no se puede, mostrar mensaje
-        if (carta.encontrada || carta.estaVuelta) {
-          mostrarMensajeSobreCarta(cartaDOM, "Ya está volteda");
-          return;
-        }
-        // 3. Si se puede voltear, ejecutar la función de voltearLaCarta
-        voltearCarta(cartaDOM, carta.imagen);
-        carta.estaVuelta = true;
-        cartaDOM.classList.remove("wobble-hor-bottom");
+    const cartaDOM = document.getElementById(nCarta.toString());
+    if (cartaDOM && cartaDOM instanceof HTMLDivElement) {
+      cartaDOM.addEventListener('click', () => manejarClickCarta(tablero, nCarta -1, cartaDOM));
     }
-
-    if (tablero.estadoPartida === "UnaCartaLevantada") {
-      tablero.estadoPartida = "DosCartasLevantadas"
-      intentos++;
-      intentosDiv.innerText = `Intentos: ${intentos}`;
-    }
-    if (tablero.estadoPartida === "CeroCartasLevantadas") {
-      tablero.estadoPartida = "UnaCartaLevantada"
-    }
-    console.log(tablero.estadoPartida);
-
-    // 5. Ver la función de verSiEsLaSegundaCarta
-    verSiEsLaSegundaCarta(tablero);
-
-    if (indicePrimeraCarta === null) {
-      indicePrimeraCarta = indice;
-    } else if (indiceSegundaCarta === null) {
-      indiceSegundaCarta = indice;
-      
-      const carta1DOM = document.getElementById((indicePrimeraCarta + 1).toString()) as HTMLDivElement;
-      const carta2DOM = document.getElementById((indiceSegundaCarta + 1).toString()) as HTMLDivElement;
-
-      if (sonPareja(indicePrimeraCarta, indiceSegundaCarta, tablero)) {
-        resetIndices();
-        tablero.estadoPartida = 'CeroCartasLevantadas';
-        modificarWobble("remove", carta1DOM, carta2DOM);
-
-        if (esPartidaCompleta(tablero)) {
-          tablero.estadoPartida = "PartidaCompleta";
-          console.log(tablero.estadoPartida);
-
-          const mensajeFinal = document.getElementById("mensaje-final") as HTMLDivElement;
-          mensajeFinal.textContent = "¡Has ganado!";
-          mensajeFinal.classList.add ("visible");
-          setTimeout(() => {
-            mensajeFinal.classList.remove("visible");
-            mensajeFinal.textContent = "";
-          }, 3000);
-        }
-      } else {
-        bloqueoClick = true;
-        setTimeout(() => {
-          ocultarCarta(carta1DOM);
-          ocultarCarta(carta2DOM);
-          tablero.cartas[indicePrimeraCarta!].estaVuelta = false;
-          tablero.cartas[indiceSegundaCarta!].estaVuelta = false;
-          modificarWobble("add", carta1DOM, carta2DOM);
-          resetIndices();
-          tablero.estadoPartida = 'CeroCartasLevantadas';
-          bloqueoClick = false;
-        }, 1000);
-        }
-      }
-    });
   }
-}
+};
 
-export const encontradaPareja = (tablero: Tablero, indicePrimeraCarta: number, indiceSegundaCarta: number, carta1DOM: HTMLDivElement, carta2DOM: HTMLDivElement) => {
+const manejarClickCarta = (tablero: Tablero, indice: number, cartaDOM: HTMLDivElement) => {
+  if (bloqueoClick) return;
+  if (sePuedeVoltearLaCarta(tablero, indice)) {
+    voltearLaCarta(tablero, indice);
+    voltearCarta(cartaDOM, tablero.cartas[indice].imagen);
+    modificarWobble("remove", cartaDOM);
+    esLaSegundaCarta(tablero);
+  } else {
+    mostrarMensajeSegunEstado(tablero, indice, cartaDOM);
+  }
+};
+
+const mostrarMensajeSegunEstado = (tablero: Tablero, indice: number, cartaDOM: HTMLDivElement) => {
+  const carta = tablero.cartas[indice];
+  if (carta.encontrada) {
+    mostrarMensajeSobreCarta(cartaDOM, "Ya encontraste esta pareja");
+  } else if (carta.estaVuelta) {
+    mostrarMensajeSobreCarta(cartaDOM, "Ya está volteada");
+  } else {
+    mostrarMensajeSobreCarta(cartaDOM, "No se puede voltear ahora");
+  }
+};
+
+const esLaSegundaCarta = (tablero: Tablero) => {
+  const indiceA = tablero.indiceCartaVolteadaA;
+  const indiceB = tablero.indiceCartaVolteadaB;
+
+  if (indiceA !== undefined && indiceB !== undefined) {
+    const carta1DOM = document.getElementById((indiceA + 1).toString());
+    const carta2DOM = document.getElementById((indiceB + 1).toString());
+
+    if (carta1DOM instanceof HTMLDivElement && carta2DOM instanceof HTMLDivElement) {
+      if (sonPareja(indiceA, indiceB, tablero)) {
+        encontradaPareja(tablero, indiceA, indiceB, carta1DOM, carta2DOM); 
+      } else {
+        noEncontradaPareja(tablero, indiceA, indiceB, carta1DOM, carta2DOM);
+      }
+      resetIndices(tablero);
+    }
+  }
+};
+
+export const encontradaPareja = (tablero: Tablero, indicePrimeraCarta: number, indiceSegundaCarta: number, 
+  carta1DOM: HTMLDivElement, carta2DOM: HTMLDivElement) => {
   parejaEncontrada(tablero, indicePrimeraCarta, indiceSegundaCarta);
   modificarWobble("remove", carta1DOM, carta2DOM);
-
+  
   if (esPartidaCompleta(tablero)) {
     tablero.estadoPartida = "PartidaCompleta";
     console.log(tablero.estadoPartida);
-
+    
     const mensajeFinal = document.getElementById("mensaje-final") as HTMLDivElement;
     mensajeFinal.textContent = "¡Has ganado!";
     mensajeFinal.classList.add("visible");
@@ -138,18 +109,20 @@ export const encontradaPareja = (tablero: Tablero, indicePrimeraCarta: number, i
   }
 }
 
-export const noEncontradaPareja = (carta1DOM: HTMLDivElement, carta2DOM: HTMLDivElement) => {
+export const noEncontradaPareja = (tablero: Tablero, indiceA: number, indiceB: number, 
+  carta1DOM: HTMLDivElement, carta2DOM: HTMLDivElement) => {
   bloqueoClick = true;
   setTimeout(() => {
     ocultarCarta(carta1DOM);
     ocultarCarta(carta2DOM);
-    tablero.cartas[indicePrimeraCarta!].estaVuelta = false;
-    tablero.cartas[indiceSegundaCarta!].estaVuelta = false;
+    tablero.cartas[indiceA].estaVuelta = false;
+    tablero.cartas[indiceB].estaVuelta = false;
     modificarWobble("add", carta1DOM, carta2DOM);
-    resetIndices();
+    resetIndices(tablero);
+    parejaNoEncontrada(tablero, indiceA, indiceB);
     bloqueoClick = false;
   }, 1000);
-}
+};
 
 const voltearCarta = (carta: HTMLElement, url: string): void => {
   carta.classList.remove("carta-vacia", "flip-vertical-right");
@@ -157,10 +130,13 @@ const voltearCarta = (carta: HTMLElement, url: string): void => {
   carta.style.backgroundImage = `url('${url}')`;
 };
 
-const resetIndices = () => {
-  indicePrimeraCarta = null;
-  indiceSegundaCarta = null;
-}
+const ocultarCarta = (carta: HTMLElement) => {
+    carta.classList.remove("flip-vertical-left");
+    carta.classList.add("flip-vertical-right", "carta-vacia");
+    setTimeout(() => {
+        carta.style.backgroundImage = "none";
+    }, 200);
+};
 
 const modificarWobble = (elegir: "add" | "remove", ...cartas: HTMLDivElement[]) => {
   cartas.forEach(carta => {
@@ -170,4 +146,27 @@ const modificarWobble = (elegir: "add" | "remove", ...cartas: HTMLDivElement[]) 
       carta.classList.remove("wobble-hor-bottom");
     }
   });
+};
+
+export const mostrarMensajeSobreCarta = (cartaDOM: HTMLDivElement, texto: string) => {
+  const rect = cartaDOM.getBoundingClientRect(); 
+  const tip = document.createElement("div");
+  tip.className = "mensaje-carta";
+  tip.textContent = texto;
+  
+  // Posicionamos el mensaje sobre la carta
+  tip.style.left = `${rect.left + rect.width / 2 + window.scrollX}px`;
+  tip.style.top = `${rect.top - 30 + window.scrollY}px`;
+  tip.style.transform = "translateX(-50%)";
+  
+  document.body.appendChild(tip);
+  
+  // Forzamos que se aplique la transición
+  requestAnimationFrame(() => tip.classList.add("mensaje-carta--visible"));
+  
+  // Lo ocultamos después de 1.2s
+  setTimeout(() => {
+    tip.classList.remove("mensaje-carta--visible");
+    setTimeout(() => tip.remove(), 250);
+  }, 1200);
 };

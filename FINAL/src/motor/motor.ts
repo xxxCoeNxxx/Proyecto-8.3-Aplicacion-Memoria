@@ -24,7 +24,6 @@ export const sePuedeVoltearLaCarta = (tablero: Tablero, indice: number ): boolea
 
 export const voltearLaCarta = (tablero: Tablero, indice: number) : void => {
   tablero.cartas[indice].estaVuelta = true;
-
   if (tablero.estadoPartida === 'CeroCartasLevantadas') {
     tablero.indiceCartaVolteadaA = indice;
     tablero.estadoPartida = "UnaCartaLevantada";
@@ -79,38 +78,20 @@ export const iniciaPartida = (tablero: Tablero): void => {
   });
 };
 
-export const ocultarCarta = (carta: HTMLElement) => {
-    carta.classList.remove("flip-vertical-left");
-    carta.classList.add("flip-vertical-right", "carta-vacia");
-    setTimeout(() => {
-        carta.style.backgroundImage = "none";
-    }, 200);
+export const parejaNoEncontrada = (tablero: Tablero, indiceA :number, indiceB : number) : void => {
+  tablero.cartas[indiceA].estaVuelta = false;
+  tablero.cartas[indiceB].estaVuelta = false;
+  tablero.estadoPartida = "CeroCartasLevantadas";
 };
 
-export const mostrarMensajeSobreCarta = (cartaDOM: HTMLDivElement, texto: string) => {
-  const rect = cartaDOM.getBoundingClientRect(); 
-  const tip = document.createElement("div");
-  tip.className = "mensaje-carta";
-  tip.textContent = texto;
-
-  // Posicionamos el mensaje sobre la carta
-  tip.style.left = `${rect.left + rect.width / 2 + window.scrollX}px`;
-  tip.style.top = `${rect.top - 30 + window.scrollY}px`;
-  tip.style.transform = "translateX(-50%)";
-
-  document.body.appendChild(tip);
-
-  // Forzamos que se aplique la transición
-  requestAnimationFrame(() => tip.classList.add("mensaje-carta--visible"));
-
-  // Lo ocultamos después de 1.2s
-  setTimeout(() => {
-    tip.classList.remove("mensaje-carta--visible");
-    setTimeout(() => tip.remove(), 250);
-  }, 1200);
+export const resetIndices = (tablero: Tablero) => {
+  tablero.indiceCartaVolteadaA = undefined;
+  tablero.indiceCartaVolteadaB = undefined;
+  tablero.estadoPartida = "CeroCartasLevantadas";
 };
 
-export const verSiEsLaSegundaCarta = (tablero: Tablero) => {
+
+/* export const verSiEsLaSegundaCarta = (tablero: Tablero) => {
   const indiceCartaA = tablero.indiceCartaVolteadaA;
   const indiceCartaB = tablero.indiceCartaVolteadaB;
 
@@ -121,7 +102,8 @@ export const verSiEsLaSegundaCarta = (tablero: Tablero) => {
     if (sonPareja(indiceCartaA, indiceCartaB, tablero)) {
       encontradaPareja(tablero, indiceCartaA, indiceCartaB, carta1DOM, carta2DOM);
     } else {
-      noEncontradaPareja(carta1DOM, carta2DOM)
+      noEncontradaPareja(tablero, indiceCartaA, indiceCartaB, carta1DOM, carta2DOM);
     }
   }
 }
+ */
